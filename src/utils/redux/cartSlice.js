@@ -1,32 +1,41 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+// cartSlice.js
+import { createSlice } from "@reduxjs/toolkit";
 
 const cartSlice = createSlice({
-    name:"cart",
-    initialState:{
-        items:[]
+    name: "cart",
+    initialState: {
+        items: [], // Each item: { id, name, price, quantity, imageId }
     },
     reducers: {
-        addItem:(state,action)=>{
-            //mutating state
-            //Redux toolkit uses Immer BTS
-             state.items.push(action.payload)
+        addItem: (state, action) => {
+            const existingItem = state.items.find(
+                (item) => item.id === action.payload.id
+            );
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                state.items.push({ ...action.payload, quantity: 1 });
+            }
         },
-        removeItem:(state)=>{
-            state.items.pop()
-       },
-       clearItem:(state)=>{
-        //can't do this state=[]
+        removeItem: (state, action) => {
+            const existingItem = state.items.find(
+                (item) => item.id === action.payload.id
+            );
+            if (existingItem) {
+                if (existingItem.quantity > 1) {
+                    existingItem.quantity -= 1;
+                } else {
+                    state.items = state.items.filter(
+                        (item) => item.id !== action.payload.id
+                    );
+                }
+            }
+        },
+        clearItem: (state) => {
+            state.items.length = 0;
+        },
+    },
+});
 
-        console.log(current(state))
-
-        state.items.length =0;// state=[]
-           //or 
-        //RTK - either mutate the state or return new stATE // return {items : []};
-   },
-
-    }
-})
-
-export const {addItem,removeItem,clearItem} = cartSlice.actions
-
+export const { addItem, removeItem, clearItem } = cartSlice.actions;
 export default cartSlice.reducer;

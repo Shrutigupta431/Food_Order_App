@@ -13,7 +13,10 @@ import ShimmerUi from "./components/ShimmerUi";
 import userContext from "./utils/userContext";
 import appStore from "./utils/redux/appStore";
 import CartMenu from "./components/CartMenu";
+import HeroMenuCard from "./components/HeroMenuCard";
 import "./App.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const ContactUs = lazy(() => import("./components/ContactUs"));
 
@@ -50,6 +53,9 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element: <Body />,
+      },
+      {path:'/heromenu',
+        element:<HeroMenuCard />
       },
       {
         path: "/about",

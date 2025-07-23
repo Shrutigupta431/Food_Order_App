@@ -6,21 +6,21 @@ function Card({ restaurant }) {
   return (
     <div
       data-testid="resCard"
-      className="m-4 p-2 w-[200px] bg-gray-100 rounded-lg hover:bg-gray-200"
+      className="mx-2 p-4 w-[280px]  rounded-lg transition-transform duration-300 ease-in  hover:shadow-md px-auto"
     >
       <img
-        className="rounded-lg "
+        className="rounded-lg w-[300px] h-[150px]"
         src={
           "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/" +
           cloudinaryImageId
         }
       />
 
-      <h2 className="font-bold py-2 text-lg">{name}</h2>
-      <h3 style={{ wordWrap: "break-word" }}>{cuisines.join(",")}</h3>
-      <h4> {costForTwo} </h4>
-      <h4>{avgRating} star</h4>
-      <h4>{sla.slaString}</h4>
+      <h2 className="font-bold py-1 text-lg">{name}</h2>
+      <h2 className="font-bold  text-lg"> * {avgRating} {sla.slaString} </h2>
+      <h3 style={{ wordWrap: "break-word" }} className="text-[#02060c99] font-medium">{cuisines.join(",")}</h3>
+      {/* <h4> {costForTwo} </h4> */}
+      {/* <h4></h4> */}
     </div>
   );
 }
