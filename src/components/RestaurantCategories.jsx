@@ -1,7 +1,8 @@
+//Controlled Compound
 import { useState } from "react";
 import ItemList from "./ItemList";
 
-function RestaurantCategories({value, data, showItems, onClick }) {
+function RestaurantCategories({value, data, showItems, onClick ,SlectedCardData}) {
  
   return (
     <div>
@@ -12,7 +13,7 @@ function RestaurantCategories({value, data, showItems, onClick }) {
           </span>
           <span className="cursor-pointer">⬇</span>
         </div>
-        <div>{showItems && <ItemList items={data.itemCards} />}</div>
+        <div>{showItems && <ItemList items={data.itemCards} SlectedCardData={SlectedCardData} />}</div>
       </div>
     </div>
   );

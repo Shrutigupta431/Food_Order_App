@@ -6,6 +6,8 @@ import userContext from "../utils/userContext";
 import { useContext } from "react";
 import useOnlineStatus from "../utils/hooks/useOnlineStatus";
 import ShimmerUi from "./ShimmerUi";
+import { useCardAPI } from "../utils/hooks/useRestaurantMenu";
+import HeroSection from "./HeroSection";
 function Body() {
   // Local-State-Variable(hook) ----Super powerful variable
   // State variable -  Keeps UI layer in sync with Data Layer -->
@@ -123,19 +125,15 @@ function Body() {
   //     },
   //   ])
 
-  const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
   const [topRated, setTopRated] = useState(false);
   const onlineStatus = useOnlineStatus();
 
   const { loggedInUser, setUserName } = useContext(userContext);
   const RestaurantOpened = OpenedCard(Card);
+  const { data, filteredData, setFilteredData } = useCardAPI();
   //normal JS variable
   // let data = []
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   // const fetchData = async () => {
   //   const data = await fetch(
@@ -152,30 +150,30 @@ function Body() {
   //       ?.restaurants
   //   );
   // };
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=28.66500&lng=77.44770&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-      );
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://www.swiggy.com/dapi/restaurants/list/v5?lat=26.2124007&lng=78.1772053&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+  //     );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
 
-      const data = await response.json();
-      console.log("Swiggy Data", data);
-      setData(
-        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants
-      );
-      setFilteredData(
-        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  //     const data = await response.json();
+  //     console.log("Swiggy Data", data);
+  //     setData(
+  //       data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+  //         ?.restaurants
+  //     );
+  //     setFilteredData(
+  //       data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+  //         ?.restaurants
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   useEffect(() => {
     if (topRated) {
@@ -188,73 +186,75 @@ function Body() {
       setFilteredData(data);
     }
   }, [searchText]);
-  console.log("searchText", searchText, filteredData);
   if (onlineStatus === false)
     return (
       <h1>
         Oops !! Looks like you are offline !! Please turn on your internet
       </h1>
     );
-
-  return filteredData.length === 0 ? (
+  return filteredData?.length === 0 ? (
     <ShimmerUi />
   ) : (
-    <div className="body-cont">
-      <div className="flex">
-        <div className="p-4">
-          <input
-            data-testid="searchInput"
-            type="text"
-            className="border-solid border-black border-2 "
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-          <button
-            className="py-1 px-4 bg-gray-300 rounded-lg m-4"
-            onClick={() => {
-              const filtRes = data.filter((res) =>
-                res.info.name.toLowerCase().includes(searchText.toLowerCase())
-              );
-              setFilteredData(filtRes);
-            }}
-          >
-            Search
-          </button>
-        </div>
-        <div className="p-4">
-          <button
-            className=" py-1 px-4 bg-gray-300 rounded-lg m-4 "
-            onClick={() => {
-              const filtData = data.filter((res) => res.info.avgRating > 4.3);
-              setFilteredData(filtData);
-              setTopRated(!topRated);
-            }}
-          >
-            {" "}
-            {topRated ? " Top Rated Restaurant" : "All Restaurant"}
-          </button>
+    <div className="body-cont w-10/12 mx-auto my-4  bg-white-100  shadow-lg ">
+      <div>
+        <HeroSection />
 
-          <label>User Name : </label>
-          <input
-            className="p-2 border-black"
-            value={loggedInUser}
-            onChange={(e) => setUserName(e.target.value)}
-          />
+        <div className="flex">
+          <div className="p-4">
+            <input
+              data-testid="searchInput"
+              type="text"
+              className="border-solid border-black border-2 "
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+            <button
+              className="py-1 px-4 bg-gray-300 rounded-lg m-4"
+              onClick={() => {
+                const filtRes = data.filter((res) =>
+                  res.info.name.toLowerCase().includes(searchText.toLowerCase())
+                );
+                setFilteredData(filtRes);
+              }}
+            >
+              Search
+            </button>
+          </div>
+          <div className="p-4">
+            <button
+              className=" py-1 px-4 bg-gray-300 rounded-lg m-4 "
+              onClick={() => {
+                const filtData = data.filter((res) => res.info.avgRating > 4.3);
+                setFilteredData(filtData);
+                setTopRated(!topRated);
+              }}
+            >
+              {" "}
+              {topRated ? " Top Rated Restaurant" : "All Restaurant"}
+            </button>
+
+            <label>User Name : </label>
+            <input
+              className="p-2 border-black"
+              value={loggedInUser}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex  flex-wrap ">
-        {filteredData.map((restaurant) => (
-          <Link
-            key={restaurant?.info?.id}
-            to={"/restaurants/" + restaurant.info.id}
-          >
-            {restaurant.info.isOpen ? (
-              <RestaurantOpened restaurant={restaurant} />
-            ) : (
-              <Card restaurant={restaurant} />
-            )}
-          </Link>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {filteredData?.map((restaurant) => (
+            <Link
+              key={restaurant?.info?.id}
+              to={"/restaurants/" + restaurant.info.id}
+            >
+              {restaurant.info.isOpen ? (
+                <RestaurantOpened restaurant={restaurant} />
+              ) : (
+                <Card restaurant={restaurant} />
+              )}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

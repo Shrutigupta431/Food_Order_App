@@ -13,7 +13,12 @@ import ShimmerUi from "./components/ShimmerUi";
 import userContext from "./utils/userContext";
 import appStore from "./utils/redux/appStore";
 import CartMenu from "./components/CartMenu";
+import HeroMenuCard from "./components/HeroMenuCard";
 import "./App.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const ContactUs = lazy(() => import("./components/ContactUs"));
 
@@ -25,7 +30,7 @@ const App = () => {
 
   useEffect(() => {
     const data = {
-      name: "John Doe",
+      name: "Shruti ",
     };
     setUserName(data.name);
   }, []);
@@ -33,9 +38,13 @@ const App = () => {
     <Provider store={appStore}>
       <userContext.Provider value={{ loggedInUser: userName, setUserName }}>
         <div className="app">
-          <Header />
+            {/* //We can pass different cocntext for particular portion of APP */}
+          <userContext.Provider value={{ loggedInUser: "Default User",setUserName }}>
+            <Header />
+          </userContext.Provider>
           <Outlet />
         </div>
+       <ToastContainer />
       </userContext.Provider>
     </Provider>
   );
@@ -50,6 +59,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element: <Body />,
+      },
+      {
+        path: '/heromenu',
+        element: <HeroMenuCard />
       },
       {
         path: "/about",

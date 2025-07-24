@@ -1,53 +1,115 @@
-import React from "react";
+// ItemList.js
+import { useState } from "react";
 import { CDN_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../utils/redux/cartSlice";
-function ItemList({ items }) {
-  const dispatch = useDispatch();
- const cartItems = useSelector((state) => state.cart.items);
+import { addItem, removeItem, clearItem } from "../utils/redux/cartSlice";
+import ConfirmModal from "../utils/modal/ConfirmModal";
 
-  const handleAddItem = (item) => {
-    dispatch(addItem(item));
+function ItemList({ items, SlectedCardData }) {
+  const dispatch = useDispatch();
+
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartRestaurantId = useSelector((state) => state.cart.restaurantId); // 👈 current restaurant in cart
+
+  const [showModal, setShowModal] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
+
+  // Get quantity of a specific item in cart
+  const getQuantity = (id) => {
+    const item = cartItems.find((i) => i.id === id);
+    return item?.quantity || 0;
   };
-  console.log(cartItems,"cartItems")
+
+  const handleAdd = (item) => {
+    const itemData = {
+      ...item.card.info,
+      restaurantId: SlectedCardData.id,
+      restaurant:SlectedCardData
+    };
+
+    // 🛑 If cart has items from different restaurant, show modal
+    if (
+      cartItems.length > 0 &&
+      cartRestaurantId &&
+      cartRestaurantId !== SlectedCardData.id
+    ) {
+      setPendingItem(itemData); // store the item to be added after confirm
+      setShowModal(true); // open modal
+      return;
+    }
+
+    dispatch(addItem(itemData));
+  };
+
+  const handleRemove = (item) => {
+    dispatch(removeItem({ ...item.card.info }));
+  };
+
+  // ✅ Called if user clicks "Yes" in modal
+  const handleConfirm = () => {
+    dispatch(clearItem());
+    dispatch(addItem(pendingItem));
+    setShowModal(false);
+    setPendingItem(null);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setPendingItem(null);
+  };
+
   return (
     <div>
-      {items.map((item) => (
-        <div
-          key={item?.card?.info?.id}
-          className="p-4 m-2 border-b-2 border-gray-400 text-left flex justify-between"
-        >
-          <div className=" w-9/12">
-            <div className="py-2">
-              <span className="text-lg">{item?.card?.info.name}</span>
+      {items.map((item) => {
+        const info = item.card.info;
+        const quantity = getQuantity(info.id);
 
-              <span>
-                {" "}
-                - ₹{" "}
-                {item?.card?.info.price
-                  ? item?.card?.info.price / 100
-                  : item?.card?.info.defaultPrice / 100}
-              </span>
+        return (
+          <div
+            key={info.id}
+            className="p-4 m-2 border-b-2 border-gray-400 text-left flex justify-between"
+          >
+            <div className="w-9/12">
+              <div className="py-2">
+                <span className="text-lg font-semibold">{info.name}</span>
+                <span> - ₹{(info.price || info.defaultPrice) / 100}</span>
+              </div>
+              <p className="text-sm">{info.description}</p>
             </div>
 
-            <div>
-              <p className="text-xs">{item?.card?.info.description}</p>
+            <div className="w-3/12 relative">
+              <img
+                className="rounded-lg"
+                src={CDN_URL + info.imageId}
+                alt="img"
+              />
+              <div className="absolute bottom-2 left-9">
+                {quantity === 0 ? (
+                  <button
+                    onClick={() => handleAdd(item)}
+                    className="bg-black text-white text-sm px-3 py-1 rounded-lg shadow"
+                  >
+                    Add +
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2 bg-black text-white px-3 py-1 rounded-lg">
+                    <button onClick={() => handleRemove(item)}>-</button>
+                    <span>{quantity}</span>
+                    <button onClick={() => handleAdd(item)}>+</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <div className="w-3/12 p-2">
-            <div className="absolute">
-              {cartItems.length===0}
-              <button
-                className="shadow-lg p-1 m-auto bg-black text-white rounded-lg "
-                onClick={() => handleAddItem(item)}
-              >
-                Add +{" "}
-              </button>
-            </div>
-            <img src={CDN_URL + item?.card?.info?.imageId} alt="img" />
-          </div>
-        </div>
-      ))}
+        );
+      })}
+
+      {/* ✅ Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showModal}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }

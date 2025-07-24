@@ -37,6 +37,8 @@ function RestaurantMenu() {
         c?.card?.card?.["@type"] ===
         "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
     );
+
+ const SlectedCardData =   resMenu?.cards[2]?.card.card.info; 
 const handleClick = (index) => {
   if (showIndex === index) {
     setShowIndex(null); // close if same index clicked again
@@ -55,6 +57,7 @@ const handleClick = (index) => {
           key={category?.card?.card?.title}
           data={category?.card?.card}
           showItems={index === showIndex}
+          SlectedCardData={SlectedCardData}
           onClick={() => handleClick(index)}
         />
       ))}
