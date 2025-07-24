@@ -38,7 +38,8 @@ const App = () => {
     <Provider store={appStore}>
       <userContext.Provider value={{ loggedInUser: userName, setUserName }}>
         <div className="app">
-          <userContext.Provider value={{ loggedInUser: "Default User",setUserName }}>//We can pass different cocntext for particular portion of APP
+            {/* //We can pass different cocntext for particular portion of APP */}
+          <userContext.Provider value={{ loggedInUser: "Default User",setUserName }}>
             <Header />
           </userContext.Provider>
           <Outlet />
