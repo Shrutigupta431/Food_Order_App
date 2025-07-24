@@ -25,7 +25,7 @@ const CustomNextArrow = ({ onClick }) => (
 const HeroSection = () => {
   const { resData } = useCardAPI();
   const HeroData = resData?.data?.cards[0]?.card?.card?.imageGridCards?.info;
-  console.log(HeroData);
+  // console.log(HeroData);
   const settings = {
     dots: false,
     infinite: false,
@@ -51,7 +51,7 @@ const HeroSection = () => {
       <Slider {...settings}>
         {HeroData?.map((item) => {
           const Entity = item.action.link.split("?")[1];
-          console.log(Entity);
+          // console.log(Entity);
           return (
             <Link
               to={`/heromenu?${Entity}`}

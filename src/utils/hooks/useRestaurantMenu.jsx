@@ -12,8 +12,9 @@ function useRestaurantMenu(resId) {
     const data = await fetch(MENU_URL + resId);
 
     const json = await data.json();
-
+  
     setResMenu(json.data);
+   
   };
   return resMenu;
 }
@@ -35,14 +36,14 @@ export const useCardAPI = () => {
       }
 
       const data = await response.json();
-      console.log("Swiggy Data", resData);
+     
       setResData(data);
       setData(
-        data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
           ?.restaurants
       );
       setFilteredData(
-        data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
           ?.restaurants
       );
     } catch (error) {

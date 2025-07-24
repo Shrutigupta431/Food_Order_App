@@ -1,22 +1,61 @@
 // ItemList.js
+import { useState } from "react";
 import { CDN_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, removeItem } from "../utils/redux/cartSlice";
+import { addItem, removeItem, clearItem } from "../utils/redux/cartSlice";
+import ConfirmModal from "../utils/modal/ConfirmModal";
 
-function ItemList({ items }) {
+function ItemList({ items, SlectedCardData }) {
   const dispatch = useDispatch();
+
   const cartItems = useSelector((state) => state.cart.items);
+  const cartRestaurantId = useSelector((state) => state.cart.restaurantId); // 👈 current restaurant in cart
+
+  const [showModal, setShowModal] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
+
+  // Get quantity of a specific item in cart
   const getQuantity = (id) => {
     const item = cartItems.find((i) => i.id === id);
     return item?.quantity || 0;
   };
 
   const handleAdd = (item) => {
-    dispatch(addItem({ ...item.card.info }));
+    const itemData = {
+      ...item.card.info,
+      restaurantId: SlectedCardData.id,
+      restaurant:SlectedCardData
+    };
+
+    // 🛑 If cart has items from different restaurant, show modal
+    if (
+      cartItems.length > 0 &&
+      cartRestaurantId &&
+      cartRestaurantId !== SlectedCardData.id
+    ) {
+      setPendingItem(itemData); // store the item to be added after confirm
+      setShowModal(true); // open modal
+      return;
+    }
+
+    dispatch(addItem(itemData));
   };
 
   const handleRemove = (item) => {
     dispatch(removeItem({ ...item.card.info }));
+  };
+
+  // ✅ Called if user clicks "Yes" in modal
+  const handleConfirm = () => {
+    dispatch(clearItem());
+    dispatch(addItem(pendingItem));
+    setShowModal(false);
+    setPendingItem(null);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setPendingItem(null);
   };
 
   return (
@@ -64,6 +103,13 @@ function ItemList({ items }) {
           </div>
         );
       })}
+
+      {/* ✅ Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showModal}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }

@@ -131,11 +131,10 @@ function Body() {
 
   const { loggedInUser, setUserName } = useContext(userContext);
   const RestaurantOpened = OpenedCard(Card);
-  const {data, filteredData,setFilteredData} = useCardAPI();
+  const { data, filteredData, setFilteredData } = useCardAPI();
   //normal JS variable
   // let data = []
 
- 
   // const fetchData = async () => {
   //   const data = await fetch(
   //     "https://www.swiggy.com/dapi/restaurants/list/v5?lat=22.7568411&lng=75.9059173&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
@@ -193,72 +192,69 @@ function Body() {
         Oops !! Looks like you are offline !! Please turn on your internet
       </h1>
     );
-
-  return filteredData.length === 0 ? (
+  return filteredData?.length === 0 ? (
     <ShimmerUi />
   ) : (
     <div className="body-cont w-10/12 mx-auto my-4  bg-white-100  shadow-lg ">
       <div>
+        <HeroSection />
 
+        <div className="flex">
+          <div className="p-4">
+            <input
+              data-testid="searchInput"
+              type="text"
+              className="border-solid border-black border-2 "
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+            <button
+              className="py-1 px-4 bg-gray-300 rounded-lg m-4"
+              onClick={() => {
+                const filtRes = data.filter((res) =>
+                  res.info.name.toLowerCase().includes(searchText.toLowerCase())
+                );
+                setFilteredData(filtRes);
+              }}
+            >
+              Search
+            </button>
+          </div>
+          <div className="p-4">
+            <button
+              className=" py-1 px-4 bg-gray-300 rounded-lg m-4 "
+              onClick={() => {
+                const filtData = data.filter((res) => res.info.avgRating > 4.3);
+                setFilteredData(filtData);
+                setTopRated(!topRated);
+              }}
+            >
+              {" "}
+              {topRated ? " Top Rated Restaurant" : "All Restaurant"}
+            </button>
 
-      <HeroSection />
-      
-      <div className="flex">
-        <div className="p-4">
-          <input
-            data-testid="searchInput"
-            type="text"
-            className="border-solid border-black border-2 "
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-          <button
-            className="py-1 px-4 bg-gray-300 rounded-lg m-4"
-            onClick={() => {
-              const filtRes = data.filter((res) =>
-                res.info.name.toLowerCase().includes(searchText.toLowerCase())
-              );
-              setFilteredData(filtRes);
-            }}
-          >
-            Search
-          </button>
+            <label>User Name : </label>
+            <input
+              className="p-2 border-black"
+              value={loggedInUser}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="p-4">
-          <button
-            className=" py-1 px-4 bg-gray-300 rounded-lg m-4 "
-            onClick={() => {
-              const filtData = data.filter((res) => res.info.avgRating > 4.3);
-              setFilteredData(filtData);
-              setTopRated(!topRated);
-            }}
-          >
-            {" "}
-            {topRated ? " Top Rated Restaurant" : "All Restaurant"}
-          </button>
-
-          <label>User Name : </label>
-          <input
-            className="p-2 border-black"
-            value={loggedInUser}
-            onChange={(e) => setUserName(e.target.value)}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {filteredData?.map((restaurant) => (
+            <Link
+              key={restaurant?.info?.id}
+              to={"/restaurants/" + restaurant.info.id}
+            >
+              {restaurant.info.isOpen ? (
+                <RestaurantOpened restaurant={restaurant} />
+              ) : (
+                <Card restaurant={restaurant} />
+              )}
+            </Link>
+          ))}
         </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        {filteredData.map((restaurant) => (
-          <Link
-            key={restaurant?.info?.id}
-            to={"/restaurants/" + restaurant.info.id}
-          >
-            {restaurant.info.isOpen ? (
-              <RestaurantOpened restaurant={restaurant} />
-            ) : (
-              <Card restaurant={restaurant} />
-            )}
-          </Link>
-        ))}
-      </div>
       </div>
     </div>
   );
