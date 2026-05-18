@@ -1,52 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Card from "./reusable/Card";
-import { useCardAPI } from "../utils/hooks/useRestaurantMenu";
+import {  useHeroCardAPI } from "../utils/hooks/useRestaurantMenu";
 
 const HeroMenuCard = () => {
-  const [searchParams] = useSearchParams();
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [resData, setResData] = useState([]);
-
-  // Extract query params
-  const collection = searchParams.get("collection_id");
-  const tags = searchParams.get("tags");
-  const type = searchParams.get("type");
-  const { heroData } = useCardAPI();
-
-  useEffect(() => {
-    if (collection && tags && type) {
-      fetchData();
-    }
-  }, []);
-
-  const fetchData = async () => {
-    const API_URL = `https://www.swiggy.com/dapi/restaurants/list/v5?lat=22.750692371812043&lng=75.89932277798653&collection=${collection}&tags=${encodeURIComponent(
-      tags
-    )}&sortBy=&filters=&type=${type}&offset=24&page_type=null`;
-
-    try {
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const json = await response.json();
-    
-
-      const restaurants =
-        json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants || [];
-
-      setResData(json);
-      setData(restaurants);
-      setFilteredData(restaurants);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+ 
+   const {resData} = useHeroCardAPI();
+ console.log("resData",resData)
   const menuData = resData?.data?.cards.filter(
     (c) =>
       c?.card.card?.["@type"] ===

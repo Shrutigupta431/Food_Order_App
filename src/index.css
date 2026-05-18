@@ -13,3 +13,11 @@
     background-color:#f0f0f0;
     margin:20px;
 }
+/* index.css or App.css */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}

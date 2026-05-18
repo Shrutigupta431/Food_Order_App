@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { LOGO_URL } from "../utils/constants";
 import logo from "../assets/images/brandlogo.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LocationSearch from "./reusable/LocationSearch";
 function Header() {
   //subscribing to the store using selector
   const cartItems = useSelector((store) => store.cart.items);
@@ -13,12 +14,15 @@ function Header() {
   const onlineStatus = useOnlineStatus();
   const { loggedInUser } = useContext(userContext);
 
-  const totalCartCount = cartItems.reduce((total,item)=>total+item.quantity,0);
-//   let total = 0;
-// for (let item of cartItems) {
-//   total += item.quantity;
-// };
-// console.log(total); // 3
+  const totalCartCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+  //   let total = 0;
+  // for (let item of cartItems) {
+  //   total += item.quantity;
+  // };
+  // console.log(total); // 3
 
   return (
     <nav className="flex justify-between bg-white shadow-2xl mb-3  sticky top-0 z-50 ">
@@ -28,10 +32,16 @@ function Header() {
 
       <div className="flex items-center">
         <ul className="flex p-4 m-4">
-          <li className="px-4">
+          <li className="px-4 flex gap-5">
+            <span>Your Location:</span>
+            <span>
+              <LocationSearch />
+            </span>
+          </li>
+          {/* <li className="px-4">
             {" "}
             Online Status :{onlineStatus ? " 🟢" : " 🔴"}
-          </li>
+          </li> */}
           <li className="px-4">
             {" "}
             <Link to="/">Home</Link>
@@ -61,14 +71,14 @@ function Header() {
             </Link>
           </li>
 
-          <button
-            className="btn"
+          <li
+            className="px-4 font-bold cursor-pointer"
             onClick={() => {
               btnName === "Login" ? setbtnName("Logout") : setbtnName("Login");
             }}
           >
             {btnName}
-          </button>
+          </li>
           <li className="px-4 font-bold">
             {" "}
             {btnName === "Login" ? "" : loggedInUser}

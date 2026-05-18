@@ -19,7 +19,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-
+import { LocationProvider } from "./utils/context/LocationContext";
 const ContactUs = lazy(() => import("./components/ContactUs"));
 
 const Grocery = lazy(() => import("./components/Grocery"));
@@ -36,9 +36,12 @@ const App = () => {
   }, []);
   return (
     <Provider store={appStore}>
+      <LocationProvider>
+
       <userContext.Provider value={{ loggedInUser: userName, setUserName }}>
         <div className="app">
             {/* //We can pass different cocntext for particular portion of APP */}
+            
           <userContext.Provider value={{ loggedInUser: "Default User",setUserName }}>
             <Header />
           </userContext.Provider>
@@ -46,6 +49,7 @@ const App = () => {
         </div>
        <ToastContainer />
       </userContext.Provider>
+      </LocationProvider>
     </Provider>
   );
 };

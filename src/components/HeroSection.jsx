@@ -24,8 +24,8 @@ const CustomNextArrow = ({ onClick }) => (
 
 const HeroSection = () => {
   const { resData } = useCardAPI();
+
   const HeroData = resData?.data?.cards[0]?.card?.card?.imageGridCards?.info;
-  // console.log(HeroData);
   const settings = {
     dots: false,
     infinite: false,

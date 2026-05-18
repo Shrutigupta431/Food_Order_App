@@ -13,7 +13,7 @@
  const setData = arr[1];
 
 
-  <!-- In short UseStae variable keep the Ui layer In sync with data layer -->
+  <!-- In short UseState variable keep the Ui layer In sync with data layer -->
 -useEffect()
 //useEffect function takes 2 arguments ,1st- callback function and 2nd- dependency array
 useEffect(()=>{},[])
